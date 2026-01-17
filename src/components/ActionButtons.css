@@ -63,6 +63,13 @@
     box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
 }
 
+/* Theme Button - Orange/Amber */
+.theme-btn:hover {
+    background: rgba(251, 146, 60, 0.8);
+    border-color: rgba(251, 146, 60, 1);
+    box-shadow: 0 6px 20px rgba(251, 146, 60, 0.4);
+}
+
 /* Edit Button - Purple */
 .edit-btn:hover {
     background: rgba(168, 85, 247, 0.8);

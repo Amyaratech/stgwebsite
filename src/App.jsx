@@ -2,29 +2,72 @@ import { useState, useEffect } from 'react';
 import './App.css';
 import ActionButtons from './components/ActionButtons';
 import DraggableWidget from './components/DraggableWidget';
+import ThemeSettings from './components/ThemeSettings';
 import config from './config/config.json';
 import { saveComponents, loadComponents } from './utils/storage';
 
-const { ipcRenderer } = window.require('electron');
+// Safe IPC access
+const getIpc = () => {
+  try {
+    if (window.require) {
+      return window.require('electron').ipcRenderer;
+    }
+  } catch (e) {
+    console.warn('IPC not available');
+  }
+  return null;
+};
+
+const ipcRenderer = getIpc();
 
 function App() {
   const [components, setComponents] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
   const [nextId, setNextId] = useState(1);
+  const [isThemeOpen, setIsThemeOpen] = useState(false);
+  const [mainTheme, setMainTheme] = useState({
+    backgroundColor: config.mainComponent.backgroundColor || '#000000',
+    backgroundOpacity: config.mainComponent.backgroundOpacity ?? 1,
+    transparent: config.mainComponent.transparent ?? false,
+  });
 
-  // Load components on mount
+  // Load components and theme on mount
   useEffect(() => {
-    const savedComponents = loadComponents();
-    if (savedComponents && savedComponents.length > 0) {
-      setComponents(savedComponents);
-      const maxId = Math.max(...savedComponents.map(c => c.id), 0);
-      setNextId(maxId + 1);
-    }
+    console.log('App mounting, starting initApp...');
+    const initApp = async () => {
+      try {
+        // Load Components
+        const savedComponents = await loadComponents();
+        console.log('Loaded components:', savedComponents);
+        if (savedComponents && savedComponents.length > 0) {
+          setComponents(savedComponents);
+          const maxId = Math.max(...savedComponents.map(c => c.id), 0);
+          setNextId(maxId + 1);
+        }
+
+        // Load Theme from config file
+        if (ipcRenderer) {
+          const dynamicConfig = await ipcRenderer.invoke('load-config-file');
+          console.log('Loaded config:', dynamicConfig);
+          if (dynamicConfig && dynamicConfig.mainComponent) {
+            setMainTheme({
+              backgroundColor: dynamicConfig.mainComponent.backgroundColor,
+              backgroundOpacity: dynamicConfig.mainComponent.backgroundOpacity,
+              transparent: dynamicConfig.mainComponent.transparent,
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error during initApp:', error);
+      }
+    };
+
+    initApp();
   }, []);
 
   // Keep window interactive when in edit mode
   useEffect(() => {
-    if (isEditMode) {
+    if (isEditMode && ipcRenderer) {
       ipcRenderer.send('set-ignore-mouse-events', false);
     }
   }, [isEditMode]);
@@ -34,9 +77,7 @@ function App() {
     console.log('Saving components:', components);
     const success = saveComponents(components);
     if (success) {
-      // Visual feedback
       alert('✅ All components saved successfully!');
-      // Auto-switch back to Live Mode
       setIsEditMode(false);
     } else {
       alert('❌ Error saving components');
@@ -45,62 +86,77 @@ function App() {
 
   // Handle Add New Component
   const handleAdd = () => {
-    console.log('Add button clicked!');
-    console.log('Current components:', components);
-    console.log('Next ID:', nextId);
-
     const newComponent = {
       id: nextId,
       name: `Component ${nextId}`,
       position: {
-        x: config.defaultWidget.defaultPosition.x + (nextId * 20),
-        y: config.defaultWidget.defaultPosition.y + (nextId * 20),
+        x: (config.defaultWidget?.defaultPosition?.x || 100) + (nextId * 20),
+        y: (config.defaultWidget?.defaultPosition?.y || 100) + (nextId * 20),
       },
       size: {
-        width: config.defaultWidget.width,
-        height: config.defaultWidget.height,
+        width: config.defaultWidget?.width || 200,
+        height: config.defaultWidget?.height || 200,
       },
-      backgroundColor: config.defaultWidget.backgroundColor,
+      backgroundColor: config.defaultWidget?.backgroundColor || '#ffffff',
     };
 
-    console.log('New component:', newComponent);
     setComponents([...components, newComponent]);
     setNextId(nextId + 1);
-
-    // Auto-enable edit mode when adding
-    if (!isEditMode) {
-      setIsEditMode(true);
-    }
-
-    console.log('Components after add:', [...components, newComponent]);
-  };
-
-  // Handle Edit Mode Toggle
-  const handleEdit = () => {
-    console.log('Edit button clicked, entering edit mode');
     setIsEditMode(true);
   };
 
-  // Handle Component Drag
+  const handleEdit = () => {
+    setIsEditMode(true);
+  };
+
+  const handleTheme = () => {
+    setIsThemeOpen(true);
+  };
+
+  const handleThemeSave = async (newTheme) => {
+    setMainTheme(newTheme);
+    if (ipcRenderer) {
+      try {
+        const currentConfig = await ipcRenderer.invoke('load-config-file');
+        if (currentConfig) {
+          currentConfig.mainComponent = {
+            ...currentConfig.mainComponent,
+            ...newTheme
+          };
+          ipcRenderer.send('save-config-file', currentConfig);
+        }
+      } catch (e) {
+        console.error('Error saving config:', e);
+      }
+    }
+  };
+
   const handleComponentDrag = (id, newPosition) => {
     setComponents(components.map(comp =>
-      comp.id === id
-        ? { ...comp, position: newPosition }
-        : comp
+      comp.id === id ? { ...comp, position: newPosition } : comp
     ));
   };
 
+  const getBackgroundColor = () => {
+    if (mainTheme.transparent) return 'transparent';
+    return mainTheme.backgroundColor || '#000000';
+  };
+
   return (
-    <div className="wallpaper-container">
-      {/* Action Buttons */}
+    <div
+      className="wallpaper-container"
+      style={{
+        backgroundColor: getBackgroundColor(),
+      }}
+    >
       <ActionButtons
         onSave={handleSave}
         onAdd={handleAdd}
+        onTheme={handleTheme}
         onEdit={handleEdit}
         isEditMode={isEditMode}
       />
 
-      {/* Draggable Components */}
       {components.map(component => (
         <DraggableWidget
           key={component.id}
@@ -113,7 +169,6 @@ function App() {
         />
       ))}
 
-      {/* Welcome Content (shown when no components) */}
       {components.length === 0 && (
         <div className="content">
           <h1 className="welcome-text">Life Live Wallpaper</h1>
@@ -122,16 +177,19 @@ function App() {
         </div>
       )}
 
-      {/* Edit Mode Indicator */}
       {isEditMode && (
         <div className="edit-mode-indicator">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-          </svg>
           <span>Edit Mode Active - Drag components to reposition</span>
         </div>
       )}
+
+      <ThemeSettings
+        isOpen={isThemeOpen}
+        onClose={() => setIsThemeOpen(false)}
+        onSave={handleThemeSave}
+        currentSettings={mainTheme}
+        targetType="main"
+      />
     </div>
   );
 }

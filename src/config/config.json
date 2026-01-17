@@ -1,8 +1,9 @@
 {
     "mainComponent": {
         "name": "Main",
-        "background": "#000000",
-        "transparent": true
+        "backgroundColor": "#000000",
+        "backgroundOpacity": 1,
+        "transparent": false
     },
     "defaultWidget": {
         "width": 200,

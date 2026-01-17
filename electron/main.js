@@ -21,6 +21,7 @@ function createWindow() {
         minimizable: false,
         maximizable: false,
         alwaysOnTop: false,
+        backgroundColor: '#000000',
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
@@ -93,4 +94,57 @@ ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
     if (win) {
         win.setIgnoreMouseEvents(ignore, options);
     }
+});
+
+// Handle saving components to file
+const fs = require('fs');
+ipcMain.on('save-components-file', (event, components) => {
+    try {
+        const filePath = path.join(__dirname, '../src/data/components.json');
+        const data = JSON.stringify({ components }, null, 2);
+        fs.writeFileSync(filePath, data, 'utf8');
+        console.log('Components saved to file:', filePath);
+    } catch (error) {
+        console.error('Error saving components to file:', error);
+    }
+});
+
+// Handle loading components from file
+ipcMain.handle('load-components-file', async () => {
+    try {
+        const filePath = path.join(__dirname, '../src/data/components.json');
+        if (fs.existsSync(filePath)) {
+            const data = fs.readFileSync(filePath, 'utf8');
+            return JSON.parse(data).components;
+        }
+    } catch (error) {
+        console.error('Error loading components from file:', error);
+    }
+    return null;
+});
+
+// Handle saving config to file
+ipcMain.on('save-config-file', (event, newConfig) => {
+    try {
+        const filePath = path.join(__dirname, '../src/config/config.json');
+        const data = JSON.stringify(newConfig, null, 4);
+        fs.writeFileSync(filePath, data, 'utf8');
+        console.log('Config saved to file:', filePath);
+    } catch (error) {
+        console.error('Error saving config to file:', error);
+    }
+});
+
+// Handle loading config from file
+ipcMain.handle('load-config-file', async () => {
+    try {
+        const filePath = path.join(__dirname, '../src/config/config.json');
+        if (fs.existsSync(filePath)) {
+            const data = fs.readFileSync(filePath, 'utf8');
+            return JSON.parse(data);
+        }
+    } catch (error) {
+        console.error('Error loading config from file:', error);
+    }
+    return null;
 });

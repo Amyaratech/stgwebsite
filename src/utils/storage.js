@@ -1,11 +1,30 @@
-// Storage utility for saving and loading components
-const STORAGE_KEY = 'life-wallpaper-components';
+// Storage utility for saving and loading components using Electron's file system
 
+// Safe IPC access
+const getIpc = () => {
+    try {
+        if (window.require) {
+            return window.require('electron').ipcRenderer;
+        }
+    } catch (e) {
+        console.warn('IPC not available in storage.js');
+    }
+    return null;
+};
+
+const ipcRenderer = getIpc();
+
+// Save to file system via Electron IPC
 export const saveComponents = (components) => {
     try {
-        const data = JSON.stringify(components, null, 2);
-        localStorage.setItem(STORAGE_KEY, data);
-        console.log('Components saved successfully:', components);
+        if (!ipcRenderer) {
+            console.warn('Cannot save: IPC not available');
+            // Fallback to localStorage for web testing
+            localStorage.setItem('life-wallpaper-components', JSON.stringify(components));
+            return true;
+        }
+        ipcRenderer.send('save-components-file', components);
+        console.log('Components save request sent to Electron:', components);
         return true;
     } catch (error) {
         console.error('Error saving components:', error);
@@ -13,13 +32,18 @@ export const saveComponents = (components) => {
     }
 };
 
-export const loadComponents = () => {
+// Load from file system primarily (via Electron)
+export const loadComponents = async () => {
     try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        if (data) {
-            const components = JSON.parse(data);
-            console.log('Components loaded successfully:', components);
-            return components;
+        if (!ipcRenderer) {
+            console.warn('Loading components from localStorage fallback');
+            const local = localStorage.getItem('life-wallpaper-components');
+            return local ? JSON.parse(local) : [];
+        }
+        const fileComponents = await ipcRenderer.invoke('load-components-file');
+        if (fileComponents) {
+            console.log('Components loaded from file system:', fileComponents);
+            return fileComponents;
         }
         return [];
     } catch (error) {
@@ -28,20 +52,14 @@ export const loadComponents = () => {
     }
 };
 
+// These are no longer used for local storage but kept for API compatibility if needed
 export const clearComponents = () => {
-    try {
-        localStorage.removeItem(STORAGE_KEY);
-        console.log('Components cleared successfully');
-        return true;
-    } catch (error) {
-        console.error('Error clearing components:', error);
-        return false;
-    }
+    return saveComponents([]);
 };
 
-export const exportComponents = () => {
+export const exportComponents = async () => {
     try {
-        const components = loadComponents();
+        const components = await loadComponents();
         const dataStr = JSON.stringify(components, null, 2);
         const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);

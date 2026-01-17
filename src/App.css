@@ -4,39 +4,27 @@
   box-sizing: border-box;
 }
 
-html {
-  background: #000000;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background: #000000;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
+html,
+body,
 #root {
   width: 100vw;
   height: 100vh;
+  margin: 0;
+  padding: 0;
   overflow: hidden;
-  background: #000000;
+  background-color: #000000;
 }
 
 .wallpaper-container {
   width: 100%;
   height: 100%;
-  background: #000000 !important;
   position: relative;
   overflow: hidden;
   z-index: 0;
+  background-color: #000000;
 }
 
-/* Content Area */
+/* Content Area for Welcome Text */
 .content {
   width: 100%;
   height: 100%;
@@ -66,7 +54,7 @@ body {
   margin: 8px 0;
 }
 
-/* Edit Mode Indicator */
+/* Edit Mode Indicator Styling */
 .edit-mode-indicator {
   position: fixed;
   bottom: 20px;
@@ -102,9 +90,4 @@ body {
 .edit-mode-indicator svg {
   width: 16px;
   height: 16px;
-}
-
-/* Smooth transitions */
-* {
-  transition: opacity 0.3s ease, transform 0.3s ease;
 }

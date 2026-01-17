@@ -1,24 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import './ActionButtons.css';
 
-const { ipcRenderer } = window.require('electron');
+// Safe IPC access
+const getIpc = () => {
+    try {
+        if (window.require) {
+            return window.require('electron').ipcRenderer;
+        }
+    } catch (e) {
+        console.warn('IPC not available in ActionButtons');
+    }
+    return null;
+};
 
-const ActionButtons = ({ onSave, onAdd, onEdit, isEditMode }) => {
+const ipcRenderer = getIpc();
+
+const ActionButtons = ({ onSave, onAdd, onTheme, onEdit, isEditMode }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleClose = () => {
-        ipcRenderer.send('close-app');
+        if (ipcRenderer) {
+            ipcRenderer.send('close-app');
+        } else {
+            console.log('Close app requested (no IPC)');
+        }
     };
 
     const handleMouseEnter = () => {
         setIsHovered(true);
-        ipcRenderer.send('set-ignore-mouse-events', false);
+        if (ipcRenderer) {
+            ipcRenderer.send('set-ignore-mouse-events', false);
+        }
     };
 
     const handleMouseLeave = () => {
         setIsHovered(false);
         // Only make click-through if not in edit mode
-        if (!isEditMode) {
+        if (!isEditMode && ipcRenderer) {
             ipcRenderer.send('set-ignore-mouse-events', true, { forward: true });
         }
     };
@@ -57,6 +75,18 @@ const ActionButtons = ({ onSave, onAdd, onEdit, isEditMode }) => {
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <line x1="12" y1="5" x2="12" y2="19"></line>
                         <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </button>
+
+                {/* Theme Button - Always visible */}
+                <button
+                    className="action-btn theme-btn"
+                    onClick={onTheme}
+                    title="Theme Settings"
+                >
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M12 1v6m0 6v6m5.2-13.2l-4.2 4.2m0 6l4.2 4.2M23 12h-6m-6 0H1m18.2 5.2l-4.2-4.2m0-6l4.2-4.2"></path>
                     </svg>
                 </button>
 
