@@ -16,6 +16,8 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
         contrast: 1,
         shadowColor: 'rgba(0,0,0,0.5)',
         shadowBlur: 0,
+        headerBackgroundColor: 'transparent',
+        headerTextColor: '#000000',
         ...currentSettings
     });
 
@@ -47,7 +49,8 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
         '#800000', '#808000', '#008000', '#008080', '#000080',
         '#800080', '#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A',
         '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E2', '#F8B739',
-        '#52B788', '#E63946', '#457B9D', '#F4A261', '#2A9D8F'
+        '#52B788', '#E63946', '#457B9D', '#F4A261', '#2A9D8F',
+        'transparent'
     ];
 
     return (
@@ -75,6 +78,14 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
                     >
                         🎨 Background
                     </button>
+                    {targetType === 'component' && (
+                        <button
+                            className={`theme-tab ${activeTab === 'header' ? 'active' : ''}`}
+                            onClick={() => setActiveTab('header')}
+                        >
+                            🏷️ Header
+                        </button>
+                    )}
                     <button
                         className={`theme-tab ${activeTab === 'border' ? 'active' : ''}`}
                         onClick={() => setActiveTab('border')}
@@ -91,6 +102,51 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
 
                 {/* Content */}
                 <div className="theme-content">
+                    {/* Header Tab */}
+                    {activeTab === 'header' && targetType === 'component' && (
+                        <div className="theme-section fade-in">
+                            <h3>Header Customization</h3>
+
+                            <div className="setting-card">
+                                <div className="color-grid-container">
+                                    <p className="label-text">Header Background Color</p>
+                                    <div className="color-palette">
+                                        {colorPalette.map((color) => (
+                                            <button
+                                                key={color}
+                                                className={`color-swatch ${settings.headerBackgroundColor === color ? 'selected' : ''}`}
+                                                style={{ backgroundColor: color === 'transparent' ? 'rgba(0,0,0,0.1)' : color }}
+                                                onClick={() => updateSetting('headerBackgroundColor', color)}
+                                                title={color}
+                                            >
+                                                {color === 'transparent' && <span style={{ fontSize: '10px', color: 'white' }}>None</span>}
+                                                {settings.headerBackgroundColor === color && <span className="check-icon">✓</span>}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div className="custom-color-area">
+                                    <p className="label-text">Header Text Color</p>
+                                    <div className="color-inputs">
+                                        <input
+                                            type="color"
+                                            value={settings.headerTextColor}
+                                            onChange={(e) => updateSetting('headerTextColor', e.target.value)}
+                                            className="color-picker-input"
+                                        />
+                                        <input
+                                            type="text"
+                                            value={settings.headerTextColor}
+                                            onChange={(e) => updateSetting('headerTextColor', e.target.value)}
+                                            className="color-hex-input"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Background Tab */}
                     {activeTab === 'background' && (
                         <div className="theme-section fade-in">

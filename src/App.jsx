@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import ActionButtons from './components/ActionButtons';
 import DraggableWidget from './components/DraggableWidget';
 import ThemeSettings from './components/ThemeSettings';
+import ComponentSettings from './components/ComponentSettings';
 import config from './config/config.json';
 import { saveComponents, loadComponents } from './utils/storage';
 
@@ -22,9 +23,19 @@ const ipcRenderer = getIpc();
 
 function App() {
   const [components, setComponents] = useState([]);
+  const componentsRef = React.useRef([]); // Ref to always have latest state for saving
+
+  // Sync ref whenever state changes
+  useEffect(() => {
+    componentsRef.current = components;
+  }, [components]);
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [nextId, setNextId] = useState(1);
   const [isThemeOpen, setIsThemeOpen] = useState(false);
+  const [isComponentSettingsOpen, setIsComponentSettingsOpen] = useState(false);
+  const [themingComponentId, setThemingComponentId] = useState(null);
+  const [editingComponentId, setEditingComponentId] = useState(null);
   const [mainTheme, setMainTheme] = useState({
     backgroundColor: config.mainComponent.backgroundColor || '#000000',
     backgroundOpacity: config.mainComponent.backgroundOpacity ?? 1,
@@ -38,6 +49,17 @@ function App() {
     contrast: config.mainComponent.contrast ?? 1,
   });
 
+  // EFFECT: Global Mouse Event Manager
+  // Ensures window is click-through when NOT editing or theming.
+  // This is critical for desktop icons and right-click menu to work.
+  useEffect(() => {
+    if (ipcRenderer) {
+      const isWindowInteractive = isEditMode || isThemeOpen || isComponentSettingsOpen;
+      console.log(`[App] Updating window interactivity: ${isWindowInteractive ? 'INTERACTIVE' : 'CLICK-THROUGH'}`);
+      ipcRenderer.send('set-ignore-mouse-events', !isWindowInteractive, { forward: true });
+    }
+  }, [isEditMode, isThemeOpen, isComponentSettingsOpen]);
+
   // Load components and theme on mount
   useEffect(() => {
     console.log('App mounting, starting initApp...');
@@ -47,20 +69,44 @@ function App() {
         const savedComponents = await loadComponents();
         console.log('Loaded components:', savedComponents);
         if (savedComponents && savedComponents.length > 0) {
-          setComponents(savedComponents);
-          const maxId = Math.max(...savedComponents.map(c => c.id), 0);
+          console.log('[Init] Raw saved components:', savedComponents);
+          // Ensure each component has default theme properties and minimum size if missing
+          const normalizedComponents = savedComponents.map(c => {
+            const normalized = {
+              ...c,
+              isVisible: c.isVisible ?? true,
+              size: {
+                width: Math.max(300, c.size?.width || 300),
+                height: Math.max(300, c.size?.height || 300)
+              },
+              theme: c.theme || {
+                backgroundColor: c.backgroundColor || '#ffffff',
+                backgroundOpacity: 1,
+                transparent: false,
+                borderRadius: 8,
+                borderWidth: 0,
+                borderColor: '#ffffff',
+                borderStyle: 'solid',
+                blur: 0,
+                brightness: 1,
+                contrast: 1,
+                headerBackgroundColor: 'transparent',
+                headerTextColor: '#000000',
+              }
+            };
+            console.log(`[Init] Component ${c.id} normalized size:`, normalized.size);
+            return normalized;
+          });
+          setComponents(normalizedComponents);
+          const maxId = Math.max(...normalizedComponents.map(c => c.id), 0);
           setNextId(maxId + 1);
         }
 
         // Load Theme from config file
         if (ipcRenderer) {
           const dynamicConfig = await ipcRenderer.invoke('load-config-file');
-          console.log('Loaded config:', dynamicConfig);
           if (dynamicConfig && dynamicConfig.mainComponent) {
-            setMainTheme({
-              ...mainTheme,
-              ...dynamicConfig.mainComponent
-            });
+            setMainTheme(prev => ({ ...prev, ...dynamicConfig.mainComponent }));
           }
         }
       } catch (error) {
@@ -71,20 +117,12 @@ function App() {
     initApp();
   }, []);
 
-  // Keep window interactive when in edit mode or theme is open
-  useEffect(() => {
-    const shouldBeInteractive = isEditMode || isThemeOpen;
-    if (ipcRenderer) {
-      ipcRenderer.send('set-ignore-mouse-events', !shouldBeInteractive, { forward: true });
-    }
-  }, [isEditMode, isThemeOpen]);
-
   // Handle Save
   const handleSave = () => {
-    console.log('Saving components:', components);
-    const success = saveComponents(components);
+    console.log('[App] handleSave triggered. Current components in Ref:', componentsRef.current);
+    const success = saveComponents(componentsRef.current);
     if (success) {
-      alert('✅ All components saved successfully!');
+      alert('✅ All components and settings saved successfully!');
       setIsEditMode(false);
     } else {
       alert('❌ Error saving components');
@@ -96,60 +134,101 @@ function App() {
     const newComponent = {
       id: nextId,
       name: `Component ${nextId}`,
+      isVisible: true,
       position: {
         x: (config.defaultWidget?.defaultPosition?.x || 100) + (nextId * 20),
         y: (config.defaultWidget?.defaultPosition?.y || 100) + (nextId * 20),
       },
       size: {
-        width: config.defaultWidget?.width || 200,
-        height: config.defaultWidget?.height || 200,
+        width: 300,
+        height: 300,
       },
-      backgroundColor: config.defaultWidget?.backgroundColor || '#ffffff',
+      theme: {
+        backgroundColor: '#ffffff',
+        backgroundOpacity: 1,
+        transparent: false,
+        borderRadius: 8,
+        borderWidth: 0,
+        borderColor: '#ffffff',
+        borderStyle: 'solid',
+        blur: 0,
+        brightness: 1,
+        contrast: 1,
+        headerBackgroundColor: 'transparent',
+        headerTextColor: '#000000',
+      }
     };
 
-    setComponents([...components, newComponent]);
+    setComponents(prev => [...prev, newComponent]);
     setNextId(nextId + 1);
     setIsEditMode(true);
   };
 
-  const handleEdit = () => {
-    setIsEditMode(true);
-  };
+  const handleEdit = () => setIsEditMode(true);
 
   const handleTheme = () => {
+    setThemingComponentId(null); // Null means main window
     setIsThemeOpen(true);
   };
 
   const handleThemeSave = async (newTheme) => {
-    console.log('Saving theme to config:', newTheme);
-    setMainTheme(newTheme);
-
-    // Auto-switch to Live Mode on theme save for best UX
-    setIsEditMode(false);
-    if (ipcRenderer) {
-      ipcRenderer.send('set-ignore-mouse-events', true, { forward: true });
-    }
-
-    if (ipcRenderer) {
-      try {
-        const currentConfig = await ipcRenderer.invoke('load-config-file');
-        if (currentConfig) {
-          currentConfig.mainComponent = {
-            ...currentConfig.mainComponent,
-            ...newTheme
-          };
-          ipcRenderer.send('save-config-file', currentConfig);
+    if (themingComponentId === null) {
+      // Main Wallpaper Theme
+      setMainTheme(newTheme);
+      setIsEditMode(false);
+      if (ipcRenderer) {
+        // No need to manually send here, the useEffect above handles it
+        try {
+          const currentConfig = await ipcRenderer.invoke('load-config-file');
+          if (currentConfig) {
+            currentConfig.mainComponent = { ...currentConfig.mainComponent, ...newTheme };
+            ipcRenderer.send('save-config-file', currentConfig);
+          }
+        } catch (e) {
+          console.error('Error saving config:', e);
         }
-      } catch (e) {
-        console.error('Error saving config:', e);
       }
+    } else {
+      // Individual Component Theme
+      setComponents(prev => prev.map(comp =>
+        comp.id === themingComponentId ? { ...comp, theme: newTheme } : comp
+      ));
     }
   };
 
-  const handleComponentDrag = (id, newPosition) => {
-    setComponents(components.map(comp =>
-      comp.id === id ? { ...comp, position: newPosition } : comp
+  const handleComponentSettingsSave = (newSettings) => {
+    setComponents(prev => prev.map(comp =>
+      comp.id === editingComponentId ? { ...comp, ...newSettings } : comp
     ));
+    setIsComponentSettingsOpen(false);
+  };
+
+  const handleComponentAction = (id, action, data) => {
+    switch (action) {
+      case 'close':
+        setComponents(prev => prev.map(comp => comp.id === id ? { ...comp, isVisible: false } : comp));
+        break;
+      case 'delete':
+        setComponents(prev => prev.filter(comp => comp.id !== id));
+        break;
+      case 'theme':
+        setThemingComponentId(id);
+        setIsThemeOpen(true);
+        break;
+      case 'edit':
+        setEditingComponentId(id);
+        setIsComponentSettingsOpen(true);
+        break;
+      case 'resize':
+        console.log(`Updating component ${id} size to:`, data);
+        setComponents(prev => prev.map(comp => comp.id === id ? { ...comp, size: data } : comp));
+        break;
+      case 'drag':
+        setComponents(prev => prev.map(comp => comp.id === id ? { ...comp, position: data } : comp));
+        break;
+      default:
+        break;
+    }
   };
 
   const getBackgroundColor = () => {
@@ -190,29 +269,26 @@ function App() {
         isThemeOpen={isThemeOpen}
       />
 
-      {components.map(component => (
+      {components.filter(c => c.isVisible !== false).map(component => (
         <DraggableWidget
           key={component.id}
           id={component.id}
+          name={component.name}
           position={component.position}
           size={component.size}
-          backgroundColor={component.backgroundColor}
-          onDrag={handleComponentDrag}
+          theme={component.theme}
+          onAction={handleComponentAction}
           isEditMode={isEditMode}
         />
       ))}
 
-      {components.length === 0 && (
-        <div className="content">
-          <h1 className="welcome-text">Life Live Wallpaper</h1>
-          <p className="subtitle">Hover over the top-right corner to see action buttons</p>
-          <p className="subtitle">Click "Add" to create your first component</p>
-        </div>
-      )}
-
       {isEditMode && (
         <div className="edit-mode-indicator">
-          <span>Edit Mode Active - Drag components to reposition</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          <span>Edit Mode: Components are Draggable & Resizable</span>
         </div>
       )}
 
@@ -220,8 +296,16 @@ function App() {
         isOpen={isThemeOpen}
         onClose={() => setIsThemeOpen(false)}
         onSave={handleThemeSave}
-        currentSettings={mainTheme}
-        targetType="main"
+        targetType={themingComponentId === null ? 'main' : 'component'}
+        currentSettings={themingComponentId === null ? mainTheme : components.find(c => c.id === themingComponentId)?.theme}
+      />
+
+      <ComponentSettings
+        isOpen={isComponentSettingsOpen}
+        onClose={() => setIsComponentSettingsOpen(false)}
+        onSave={handleComponentSettingsSave}
+        component={components.find(c => c.id === editingComponentId)}
+        availableTypes={config.componentMetadata?.availableTypes || []}
       />
     </div>
   );

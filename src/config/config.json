@@ -29,5 +29,13 @@
         "spacing": 12,
         "cornerOffset": 20,
         "hoverDelay": 300
+    },
+    "componentMetadata": {
+        "availableTypes": [
+            "YearTaskTracker",
+            "WorldClock",
+            "StickyNotes",
+            "PhotoGallery"
+        ]
     }
 }

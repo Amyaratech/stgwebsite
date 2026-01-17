@@ -17,17 +17,19 @@ const ipcRenderer = getIpc();
 // Save to file system via Electron IPC
 export const saveComponents = (components) => {
     try {
+        // Essential for Electron: Strip React Proxies/Functions before IPC
+        const cleanData = JSON.parse(JSON.stringify(components));
+        console.log('[Storage] Sending sanitized data to Electron:', cleanData);
+
         if (!ipcRenderer) {
-            console.warn('Cannot save: IPC not available');
-            // Fallback to localStorage for web testing
-            localStorage.setItem('life-wallpaper-components', JSON.stringify(components));
+            console.warn('[Storage] IPC not available, saving to localStorage');
+            localStorage.setItem('life-wallpaper-components', JSON.stringify(cleanData));
             return true;
         }
-        ipcRenderer.send('save-components-file', components);
-        console.log('Components save request sent to Electron:', components);
+        ipcRenderer.send('save-components-file', cleanData);
         return true;
     } catch (error) {
-        console.error('Error saving components:', error);
+        console.error('[Storage] Error sanitizing or saving components:', error);
         return false;
     }
 };

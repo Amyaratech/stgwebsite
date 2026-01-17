@@ -36,17 +36,16 @@ function createWindow() {
     mainWindow.setMenu(null);
 
     // Set window level to be behind normal windows (wallpaper behavior)
-    // This makes desktop icons appear on top
     try {
         if (process.platform === 'win32') {
-            // On Windows, we can use setAlwaysOnTop(false) and position it correctly
             mainWindow.setAlwaysOnTop(false);
-            mainWindow.moveTop(); // Move to top of z-order first
-            mainWindow.blur(); // Then blur to let other windows come forward
         }
     } catch (error) {
         console.error('Error setting window level:', error);
     }
+
+    // Default to ignore mouse events on startup (Live Mode)
+    mainWindow.setIgnoreMouseEvents(true, { forward: true });
 
     // Load the app
     const isDev = process.env.NODE_ENV === 'development';
@@ -73,10 +72,11 @@ function createWindow() {
 // IPC Handlers for File System Operations
 ipcMain.handle('load-components-file', async () => {
     try {
-        const filePath = path.join(__dirname, '../src/data/components.json');
+        const filePath = 'f:/LifeLiveWallpapper/src/data/components.json';
         const fs = require('fs').promises;
         const data = await fs.readFile(filePath, 'utf8');
-        return JSON.parse(data).components;
+        const parsed = JSON.parse(data);
+        return parsed.components || [];
     } catch (error) {
         console.error('Error reading components file:', error);
         return [];
@@ -85,19 +85,26 @@ ipcMain.handle('load-components-file', async () => {
 
 ipcMain.on('save-components-file', async (event, components) => {
     try {
-        const filePath = path.join(__dirname, '../src/data/components.json');
+        console.log('[Electron] Received save-components-file request');
+        // If components is not an array (some IPC edge cases), try to fix it
+        const componentsArray = Array.isArray(components) ? components : (components.components || []);
+
+        console.log(`[Electron] Data integrity check: ${componentsArray.length} items`);
+
+        const filePath = 'f:/LifeLiveWallpapper/src/data/components.json';
         const fs = require('fs').promises;
-        const data = JSON.stringify({ components }, null, 2);
-        await fs.writeFile(filePath, 'utf8', data);
-        console.log('Components saved to file:', filePath);
+        const payload = JSON.stringify({ components: componentsArray }, null, 2);
+
+        await fs.writeFile(filePath, payload, 'utf8');
+        console.log('[Electron] FILE UPDATE SUCCESS:', filePath);
     } catch (error) {
-        console.error('Error writing components file:', error);
+        console.error('[Electron] FATAL WRITE ERROR:', error);
     }
 });
 
 ipcMain.handle('load-config-file', async () => {
     try {
-        const filePath = path.join(__dirname, '../src/config/config.json');
+        const filePath = 'f:/LifeLiveWallpapper/src/config/config.json';
         const fs = require('fs').promises;
         const data = await fs.readFile(filePath, 'utf8');
         return JSON.parse(data);
@@ -109,7 +116,7 @@ ipcMain.handle('load-config-file', async () => {
 
 ipcMain.on('save-config-file', async (event, configData) => {
     try {
-        const filePath = path.join(__dirname, '../src/config/config.json');
+        const filePath = 'f:/LifeLiveWallpapper/src/config/config.json';
         const fs = require('fs').promises;
         const data = JSON.stringify(configData, null, 2);
         await fs.writeFile(filePath, 'utf8', data);

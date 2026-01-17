@@ -2,42 +2,63 @@
   "components": [
     {
       "id": 1,
-      "name": "Component 1",
+      "name": "clock",
+      "isVisible": true,
+      "type": "WorldClock",
       "position": {
-        "x": 4315,
-        "y": 139
+        "x": 3972,
+        "y": 270
       },
       "size": {
-        "width": 200,
-        "height": 200
+        "width": 713,
+        "height": 300
       },
-      "backgroundColor": "#ffffff"
+      "theme": {
+        "backgroundColor": "#FFFFFF",
+        "backgroundOpacity": 0.45,
+        "transparent": false,
+        "borderRadius": 0,
+        "borderWidth": 0,
+        "borderColor": "#a855f7",
+        "borderStyle": "solid",
+        "blur": 10,
+        "brightness": 1,
+        "contrast": 1,
+        "shadowColor": "rgba(0,0,0,0.5)",
+        "shadowBlur": 0,
+        "headerBackgroundColor": "#FFFF00",
+        "headerTextColor": "#000000"
+      }
     },
     {
       "id": 2,
       "name": "Component 2",
+      "isVisible": true,
+      "type": "General",
       "position": {
-        "x": 3898,
-        "y": 500
+        "x": 4124,
+        "y": 638
       },
       "size": {
-        "width": 200,
-        "height": 200
+        "width": 435,
+        "height": 300
       },
-      "backgroundColor": "#ffffff"
-    },
-    {
-      "id": 3,
-      "name": "Component 3",
-      "position": {
-        "x": 4317,
-        "y": 903
-      },
-      "size": {
-        "width": 200,
-        "height": 200
-      },
-      "backgroundColor": "#ffffff"
+      "theme": {
+        "backgroundColor": "#008080",
+        "backgroundOpacity": 0.51,
+        "transparent": false,
+        "borderRadius": 0,
+        "borderWidth": 0,
+        "borderColor": "#a855f7",
+        "borderStyle": "solid",
+        "blur": 10,
+        "brightness": 1,
+        "contrast": 1,
+        "shadowColor": "rgba(0,0,0,0.5)",
+        "shadowBlur": 0,
+        "headerBackgroundColor": "transparent",
+        "headerTextColor": "#000000"
+      }
     }
   ]
 }
