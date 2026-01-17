@@ -1,0 +1,88 @@
+.action-buttons-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    padding: 20px;
+    z-index: 10000;
+    pointer-events: all;
+    width: 300px;
+    height: 100px;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+}
+
+.action-buttons.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: all;
+}
+
+.action-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+/* Save Button - Green */
+.save-btn:hover {
+    background: rgba(52, 211, 153, 0.8);
+    border-color: rgba(52, 211, 153, 1);
+    box-shadow: 0 6px 20px rgba(52, 211, 153, 0.4);
+}
+
+/* Add Button - Blue */
+.add-btn:hover {
+    background: rgba(59, 130, 246, 0.8);
+    border-color: rgba(59, 130, 246, 1);
+    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Edit Button - Purple */
+.edit-btn:hover {
+    background: rgba(168, 85, 247, 0.8);
+    border-color: rgba(168, 85, 247, 1);
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
+}
+
+.edit-btn.active {
+    background: rgba(168, 85, 247, 0.9);
+    border-color: rgba(168, 85, 247, 1);
+}
+
+/* Close Button - Red */
+.close-btn:hover {
+    background: rgba(239, 68, 68, 0.8);
+    border-color: rgba(239, 68, 68, 1);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+}
+
+.action-btn svg {
+    width: 20px;
+    height: 20px;
+}

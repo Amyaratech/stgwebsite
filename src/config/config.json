@@ -1,0 +1,23 @@
+{
+    "mainComponent": {
+        "name": "Main",
+        "background": "#000000",
+        "transparent": true
+    },
+    "defaultWidget": {
+        "width": 200,
+        "height": 200,
+        "backgroundColor": "#ffffff",
+        "borderRadius": 8,
+        "defaultPosition": {
+            "x": 100,
+            "y": 100
+        }
+    },
+    "actionButtons": {
+        "size": 48,
+        "spacing": 12,
+        "cornerOffset": 20,
+        "hoverDelay": 300
+    }
+}
