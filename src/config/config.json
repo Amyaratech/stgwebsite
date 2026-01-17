@@ -1,9 +1,18 @@
 {
     "mainComponent": {
         "name": "Main",
-        "backgroundColor": "#000000",
-        "backgroundOpacity": 1,
-        "transparent": false
+        "backgroundColor": "#00FF00",
+        "backgroundOpacity": 0,
+        "transparent": true,
+        "borderRadius": 0,
+        "borderWidth": 0,
+        "borderColor": "#a855f7",
+        "borderStyle": "solid",
+        "blur": 10,
+        "brightness": 1,
+        "contrast": 1,
+        "shadowColor": "rgba(0,0,0,0.5)",
+        "shadowBlur": 0
     },
     "defaultWidget": {
         "width": 200,

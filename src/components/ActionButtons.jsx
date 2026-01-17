@@ -15,14 +15,12 @@ const getIpc = () => {
 
 const ipcRenderer = getIpc();
 
-const ActionButtons = ({ onSave, onAdd, onTheme, onEdit, isEditMode }) => {
+const ActionButtons = ({ onSave, onAdd, onTheme, onEdit, isEditMode, isThemeOpen }) => {
     const [isHovered, setIsHovered] = useState(false);
 
     const handleClose = () => {
         if (ipcRenderer) {
             ipcRenderer.send('close-app');
-        } else {
-            console.log('Close app requested (no IPC)');
         }
     };
 
@@ -35,8 +33,8 @@ const ActionButtons = ({ onSave, onAdd, onTheme, onEdit, isEditMode }) => {
 
     const handleMouseLeave = () => {
         setIsHovered(false);
-        // Only make click-through if not in edit mode
-        if (!isEditMode && ipcRenderer) {
+        // Only make click-through if not in edit mode AND theme popup is not open
+        if (!isEditMode && !isThemeOpen && ipcRenderer) {
             ipcRenderer.send('set-ignore-mouse-events', true, { forward: true });
         }
     };

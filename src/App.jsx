@@ -29,6 +29,13 @@ function App() {
     backgroundColor: config.mainComponent.backgroundColor || '#000000',
     backgroundOpacity: config.mainComponent.backgroundOpacity ?? 1,
     transparent: config.mainComponent.transparent ?? false,
+    borderRadius: config.mainComponent.borderRadius ?? 0,
+    borderWidth: config.mainComponent.borderWidth ?? 0,
+    borderColor: config.mainComponent.borderColor || '#ffffff',
+    borderStyle: config.mainComponent.borderStyle || 'solid',
+    blur: config.mainComponent.blur ?? 0,
+    brightness: config.mainComponent.brightness ?? 1,
+    contrast: config.mainComponent.contrast ?? 1,
   });
 
   // Load components and theme on mount
@@ -51,9 +58,8 @@ function App() {
           console.log('Loaded config:', dynamicConfig);
           if (dynamicConfig && dynamicConfig.mainComponent) {
             setMainTheme({
-              backgroundColor: dynamicConfig.mainComponent.backgroundColor,
-              backgroundOpacity: dynamicConfig.mainComponent.backgroundOpacity,
-              transparent: dynamicConfig.mainComponent.transparent,
+              ...mainTheme,
+              ...dynamicConfig.mainComponent
             });
           }
         }
@@ -65,12 +71,13 @@ function App() {
     initApp();
   }, []);
 
-  // Keep window interactive when in edit mode
+  // Keep window interactive when in edit mode or theme is open
   useEffect(() => {
-    if (isEditMode && ipcRenderer) {
-      ipcRenderer.send('set-ignore-mouse-events', false);
+    const shouldBeInteractive = isEditMode || isThemeOpen;
+    if (ipcRenderer) {
+      ipcRenderer.send('set-ignore-mouse-events', !shouldBeInteractive, { forward: true });
     }
-  }, [isEditMode]);
+  }, [isEditMode, isThemeOpen]);
 
   // Handle Save
   const handleSave = () => {
@@ -114,7 +121,15 @@ function App() {
   };
 
   const handleThemeSave = async (newTheme) => {
+    console.log('Saving theme to config:', newTheme);
     setMainTheme(newTheme);
+
+    // Auto-switch to Live Mode on theme save for best UX
+    setIsEditMode(false);
+    if (ipcRenderer) {
+      ipcRenderer.send('set-ignore-mouse-events', true, { forward: true });
+    }
+
     if (ipcRenderer) {
       try {
         const currentConfig = await ipcRenderer.invoke('load-config-file');
@@ -138,16 +153,33 @@ function App() {
   };
 
   const getBackgroundColor = () => {
-    if (mainTheme.transparent) return 'transparent';
-    return mainTheme.backgroundColor || '#000000';
+    if (mainTheme.transparent) return 'rgba(0,0,0,0)';
+    const hex = mainTheme.backgroundColor || '#000000';
+    if (mainTheme.backgroundOpacity < 1) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${mainTheme.backgroundOpacity})`;
+    }
+    return hex;
   };
+
+  const containerStyle = {
+    backgroundColor: getBackgroundColor(),
+    borderRadius: `${mainTheme.borderRadius}px`,
+    border: !mainTheme.transparent && mainTheme.borderWidth > 0 ? `${mainTheme.borderWidth}px ${mainTheme.borderStyle} ${mainTheme.borderColor}` : 'none',
+    backdropFilter: !mainTheme.transparent && mainTheme.blur > 0 ? `blur(${mainTheme.blur}px)` : 'none',
+    filter: !mainTheme.transparent ? `brightness(${mainTheme.brightness}) contrast(${mainTheme.contrast})` : 'none',
+  };
+
+  useEffect(() => {
+    console.log('Final Container Style:', containerStyle);
+  }, [mainTheme]);
 
   return (
     <div
       className="wallpaper-container"
-      style={{
-        backgroundColor: getBackgroundColor(),
-      }}
+      style={containerStyle}
     >
       <ActionButtons
         onSave={handleSave}
@@ -155,6 +187,7 @@ function App() {
         onTheme={handleTheme}
         onEdit={handleEdit}
         isEditMode={isEditMode}
+        isThemeOpen={isThemeOpen}
       />
 
       {components.map(component => (

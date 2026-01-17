@@ -12,7 +12,7 @@ body,
   margin: 0;
   padding: 0;
   overflow: hidden;
-  background-color: #000000;
+  background-color: rgba(0, 0, 0, 0);
 }
 
 .wallpaper-container {
@@ -21,7 +21,6 @@ body,
   position: relative;
   overflow: hidden;
   z-index: 0;
-  background-color: #000000;
 }
 
 /* Content Area for Welcome Text */

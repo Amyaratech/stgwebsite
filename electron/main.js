@@ -1,12 +1,16 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const path = require('path');
 
+// FORCE DISABLE Hardware Acceleration - Essential for stable transparency on many Windows machines
+app.disableHardwareAcceleration();
+app.commandLine.appendSwitch('wm-window-animations-disabled');
+
 let mainWindow;
 
 function createWindow() {
-    // Get primary display dimensions
+    // Get full screen size (including taskbar area)
     const primaryDisplay = screen.getPrimaryDisplay();
-    const { width, height } = primaryDisplay.workAreaSize;
+    const { width, height } = primaryDisplay.size;
 
     mainWindow = new BrowserWindow({
         width: width,
@@ -21,12 +25,15 @@ function createWindow() {
         minimizable: false,
         maximizable: false,
         alwaysOnTop: false,
-        backgroundColor: '#000000',
+        backgroundColor: '#00000000', // Explicit 0% alpha background
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
         },
     });
+
+    // Remove menu bar
+    mainWindow.setMenu(null);
 
     // Set window level to be behind normal windows (wallpaper behavior)
     // This makes desktop icons appear on top
@@ -38,20 +45,17 @@ function createWindow() {
             mainWindow.blur(); // Then blur to let other windows come forward
         }
     } catch (error) {
-        console.log('Could not set window level:', error);
+        console.error('Error setting window level:', error);
     }
-
-    // Enable click-through by default (mouse events pass through to desktop)
-    // This allows right-click menu and desktop interactions to work normally
-    mainWindow.setIgnoreMouseEvents(true, { forward: true });
 
     // Load the app
     const isDev = process.env.NODE_ENV === 'development';
 
     if (isDev) {
         mainWindow.loadURL('http://localhost:5173');
-        // Open DevTools in development
-        mainWindow.webContents.openDevTools();
+        // IMPORTANT: Docked DevTools will BREAK transparency.
+        // If testing transparency, DevTools should be detached or closed.
+        mainWindow.webContents.openDevTools({ mode: 'detach' });
     } else {
         mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
     }
@@ -65,6 +69,66 @@ function createWindow() {
         console.log('Life Live Wallpaper loaded successfully!');
     });
 }
+
+// IPC Handlers for File System Operations
+ipcMain.handle('load-components-file', async () => {
+    try {
+        const filePath = path.join(__dirname, '../src/data/components.json');
+        const fs = require('fs').promises;
+        const data = await fs.readFile(filePath, 'utf8');
+        return JSON.parse(data).components;
+    } catch (error) {
+        console.error('Error reading components file:', error);
+        return [];
+    }
+});
+
+ipcMain.on('save-components-file', async (event, components) => {
+    try {
+        const filePath = path.join(__dirname, '../src/data/components.json');
+        const fs = require('fs').promises;
+        const data = JSON.stringify({ components }, null, 2);
+        await fs.writeFile(filePath, 'utf8', data);
+        console.log('Components saved to file:', filePath);
+    } catch (error) {
+        console.error('Error writing components file:', error);
+    }
+});
+
+ipcMain.handle('load-config-file', async () => {
+    try {
+        const filePath = path.join(__dirname, '../src/config/config.json');
+        const fs = require('fs').promises;
+        const data = await fs.readFile(filePath, 'utf8');
+        return JSON.parse(data);
+    } catch (error) {
+        console.error('Error reading config file:', error);
+        return null;
+    }
+});
+
+ipcMain.on('save-config-file', async (event, configData) => {
+    try {
+        const filePath = path.join(__dirname, '../src/config/config.json');
+        const fs = require('fs').promises;
+        const data = JSON.stringify(configData, null, 2);
+        await fs.writeFile(filePath, 'utf8', data);
+        console.log('Config saved to file:', filePath);
+    } catch (error) {
+        console.error('Error writing config file:', error);
+    }
+});
+
+ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
+    const win = BrowserWindow.fromWebContents(event.sender);
+    if (win) {
+        win.setIgnoreMouseEvents(ignore, options);
+    }
+});
+
+ipcMain.on('close-app', () => {
+    app.quit();
+});
 
 app.whenReady().then(() => {
     createWindow();
@@ -80,71 +144,4 @@ app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
-});
-
-// Handle close request from renderer
-ipcMain.on('close-app', () => {
-    console.log('Closing Life Live Wallpaper...');
-    app.quit();
-});
-
-// Handle mouse event toggling for interactive elements (like close button)
-ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
-    const win = BrowserWindow.fromWebContents(event.sender);
-    if (win) {
-        win.setIgnoreMouseEvents(ignore, options);
-    }
-});
-
-// Handle saving components to file
-const fs = require('fs');
-ipcMain.on('save-components-file', (event, components) => {
-    try {
-        const filePath = path.join(__dirname, '../src/data/components.json');
-        const data = JSON.stringify({ components }, null, 2);
-        fs.writeFileSync(filePath, data, 'utf8');
-        console.log('Components saved to file:', filePath);
-    } catch (error) {
-        console.error('Error saving components to file:', error);
-    }
-});
-
-// Handle loading components from file
-ipcMain.handle('load-components-file', async () => {
-    try {
-        const filePath = path.join(__dirname, '../src/data/components.json');
-        if (fs.existsSync(filePath)) {
-            const data = fs.readFileSync(filePath, 'utf8');
-            return JSON.parse(data).components;
-        }
-    } catch (error) {
-        console.error('Error loading components from file:', error);
-    }
-    return null;
-});
-
-// Handle saving config to file
-ipcMain.on('save-config-file', (event, newConfig) => {
-    try {
-        const filePath = path.join(__dirname, '../src/config/config.json');
-        const data = JSON.stringify(newConfig, null, 4);
-        fs.writeFileSync(filePath, data, 'utf8');
-        console.log('Config saved to file:', filePath);
-    } catch (error) {
-        console.error('Error saving config to file:', error);
-    }
-});
-
-// Handle loading config from file
-ipcMain.handle('load-config-file', async () => {
-    try {
-        const filePath = path.join(__dirname, '../src/config/config.json');
-        if (fs.existsSync(filePath)) {
-            const data = fs.readFileSync(filePath, 'utf8');
-            return JSON.parse(data);
-        }
-    } catch (error) {
-        console.error('Error loading config from file:', error);
-    }
-    return null;
 });
