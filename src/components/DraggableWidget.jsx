@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import './DraggableWidget.css';
+import WorldClockWidget from './WorldClockWidget';
 
-const DraggableWidget = ({ id, name, type, position, size, theme, onAction, isEditMode }) => {
+const DraggableWidget = ({ id, name, type, position, size, theme, typeConfig, onAction, isEditMode }) => {
     const [isHovered, setIsHovered] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const nodeRef = useRef(null);
@@ -117,9 +118,32 @@ const DraggableWidget = ({ id, name, type, position, size, theme, onAction, isEd
 
                 {/* Main Content Area */}
                 <div className="widget-content">
-                    <div className="component-type-badge" style={{ color: theme?.headerTextColor ? `${theme.headerTextColor}CC` : 'rgba(0,0,0,0.4)' }}>
-                        {type || 'General'}
-                    </div>
+                    {!type || type === 'None' || type === '' ? (
+                        <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            height: '100%',
+                            color: 'rgba(0,0,0,0.3)',
+                            textAlign: 'center',
+                            padding: '20px'
+                        }}>
+                            <div style={{ fontSize: '48px', marginBottom: '12px', opacity: 0.4 }}>📝</div>
+                            <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '4px', color: 'rgba(0,0,0,0.4)' }}>
+                                No type selected
+                            </div>
+                            <div style={{ fontSize: '12px', color: 'rgba(0,0,0,0.3)' }}>
+                                Please edit and select type
+                            </div>
+                        </div>
+                    ) : type === 'WorldClock' ? (
+                        <WorldClockWidget config={typeConfig} size={localSize} />
+                    ) : (
+                        <div className="component-type-badge" style={{ color: theme?.headerTextColor ? `${theme.headerTextColor}CC` : 'rgba(0,0,0,0.4)' }}>
+                            {type}
+                        </div>
+                    )}
                 </div>
 
                 {/* Delete Confirmation Overlay */}

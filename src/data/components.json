@@ -6,28 +6,37 @@
       "isVisible": true,
       "type": "WorldClock",
       "position": {
-        "x": 3972,
-        "y": 270
+        "x": 4606,
+        "y": 284
       },
       "size": {
-        "width": 713,
-        "height": 300
+        "width": 426,
+        "height": 334
       },
       "theme": {
         "backgroundColor": "#FFFFFF",
-        "backgroundOpacity": 0.45,
+        "backgroundOpacity": 0.95,
         "transparent": false,
-        "borderRadius": 0,
+        "borderRadius": 16,
         "borderWidth": 0,
-        "borderColor": "#a855f7",
+        "borderColor": "#E5E7EB",
         "borderStyle": "solid",
-        "blur": 10,
+        "blur": 8,
         "brightness": 1,
         "contrast": 1,
-        "shadowColor": "rgba(0,0,0,0.5)",
-        "shadowBlur": 0,
-        "headerBackgroundColor": "#FFFF00",
-        "headerTextColor": "#000000"
+        "shadowColor": "rgba(0,0,0,0.1)",
+        "shadowBlur": 20,
+        "shadowX": 0,
+        "shadowY": 4,
+        "headerBackgroundColor": "#F3F4F6",
+        "headerTextColor": "#1F2937"
+      },
+      "typeConfig": {
+        "timezone": "Asia/Kolkata",
+        "format": "time-day-24h",
+        "fontFamily": "times",
+        "timeColor": "#451A03",
+        "locationColor": "#78350F"
       }
     },
     {
@@ -36,8 +45,8 @@
       "isVisible": true,
       "type": "General",
       "position": {
-        "x": 4124,
-        "y": 638
+        "x": 4635,
+        "y": 783
       },
       "size": {
         "width": 435,

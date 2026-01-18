@@ -274,9 +274,11 @@ function App() {
           key={component.id}
           id={component.id}
           name={component.name}
+          type={component.type}
           position={component.position}
           size={component.size}
           theme={component.theme}
+          typeConfig={component.typeConfig}
           onAction={handleComponentAction}
           isEditMode={isEditMode}
         />

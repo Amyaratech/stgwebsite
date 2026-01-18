@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './ThemeSettings.css';
+import { themePresets, applyThemePreset } from '../data/themePresets';
 
 const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 'main' }) => {
-    const [activeTab, setActiveTab] = useState('background');
+    const [activeTab, setActiveTab] = useState('presets'); // Changed to 'presets' as default
     const [settings, setSettings] = useState({
         backgroundColor: '#000000',
         backgroundOpacity: 1,
@@ -42,6 +43,12 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
         onClose();
     };
 
+    const handleApplyPreset = (preset) => {
+        const applied = applyThemePreset(preset);
+        onSave(applied.theme);
+        onClose();
+    };
+
     // Predefined color palette
     const colorPalette = [
         '#000000', '#FFFFFF', '#FF0000', '#00FF00', '#0000FF',
@@ -73,6 +80,12 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
                 {/* Tabs */}
                 <div className="theme-tabs">
                     <button
+                        className={`theme-tab ${activeTab === 'presets' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('presets')}
+                    >
+                        ✨ Presets
+                    </button>
+                    <button
                         className={`theme-tab ${activeTab === 'background' ? 'active' : ''}`}
                         onClick={() => setActiveTab('background')}
                     >
@@ -102,6 +115,79 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
 
                 {/* Content */}
                 <div className="theme-content">
+                    {/* Presets Tab */}
+                    {activeTab === 'presets' && (
+                        <div className="theme-section fade-in">
+                            <h3>✨ Theme Presets</h3>
+                            <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '20px', fontSize: '14px' }}>
+                                Select from our curated collection of professional themes.
+                                Each preset applies beautiful 3D card styling, colors, and effects instantly.
+                            </p>
+
+                            <div className="theme-presets-grid-large">
+                                {themePresets.map((preset) => (
+                                    <div
+                                        key={preset.id}
+                                        className="theme-preset-card-large"
+                                        onClick={() => handleApplyPreset(preset)}
+                                    >
+                                        <div className="preset-header-row">
+                                            <div className="preset-emoji-large">{preset.emoji}</div>
+                                            <div className="preset-info-large">
+                                                <h4 className="preset-name-large">{preset.name}</h4>
+                                                <p className="preset-description-large">{preset.description}</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="preset-widget-preview">
+                                            <div
+                                                className="preview-widget-container"
+                                                style={{
+                                                    backgroundColor: preset.container.backgroundColor,
+                                                    opacity: preset.container.backgroundOpacity,
+                                                    borderRadius: `${preset.container.borderRadius}px`,
+                                                    borderWidth: `${preset.container.borderWidth}px`,
+                                                    borderColor: preset.container.borderColor,
+                                                    borderStyle: preset.container.borderStyle,
+                                                    filter: `brightness(${preset.container.brightness}) contrast(${preset.container.contrast})`,
+                                                    boxShadow: `${preset.container.shadowX / 2}px ${preset.container.shadowY / 2}px ${preset.container.shadowBlur / 2}px ${preset.container.shadowColor}`
+                                                }}
+                                            >
+                                                <div
+                                                    className="preview-widget-header"
+                                                    style={{
+                                                        backgroundColor: preset.container.headerBackgroundColor,
+                                                        color: preset.container.headerTextColor
+                                                    }}
+                                                >
+                                                    PREVIEW
+                                                </div>
+                                                <div className="preview-widget-content">
+                                                    <div
+                                                        className="preview-time"
+                                                        style={{
+                                                            color: preset.clock.timeColor,
+                                                            fontFamily: preset.clock.fontFamily
+                                                        }}
+                                                    >
+                                                        12:49
+                                                    </div>
+                                                    <div
+                                                        className="preview-location"
+                                                        style={{ color: preset.clock.locationColor }}
+                                                    >
+                                                        Theme Preview
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="preset-click-hint">Click to apply →</div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Header Tab */}
                     {activeTab === 'header' && targetType === 'component' && (
                         <div className="theme-section fade-in">
@@ -351,3 +437,7 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
 };
 
 export default ThemeSettings;
+
+
+
+
