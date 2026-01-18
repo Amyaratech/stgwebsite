@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './WorldClockWidget.css';
-import { clockFonts } from '../data/timezones';
+import { clockFonts, timezones, getFlagEmoji } from '../data/timezones';
 
 const WorldClockWidget = ({ config, size }) => {
     const [currentTime, setCurrentTime] = useState(new Date());
@@ -217,28 +217,63 @@ const WorldClockWidget = ({ config, size }) => {
         return font ? font.family : clockFonts[0].family;
     };
 
+    // Get Flag for Background
+    const renderFlagBackground = () => {
+        if (!config?.showFlag) return null;
+
+        const { timezone = 'Asia/Kolkata' } = config || {};
+        const tzInfo = timezones.find(t => t.value === timezone);
+        if (!tzInfo?.country || tzInfo.country === 'UN') return null;
+
+        const countryCode = tzInfo.country.toLowerCase();
+        // Using FlagCDN for high-quality, high-res flag images
+        const flagUrl = `https://flagcdn.com/w1280/${countryCode}.png`;
+        const opacity = config.flagOpacity ?? 0.8;
+
+        return (
+            <div className="clock-background-flag-layer">
+                <img
+                    src={flagUrl}
+                    alt=""
+                    className="clock-bg-image"
+                    style={{ opacity: opacity }}
+                />
+                {/* Subtle scrim to ensure text readability */}
+                <div className="clock-bg-overlay"></div>
+            </div>
+        );
+    };
+
     return (
         <div className="world-clock-widget" ref={containerRef}>
-            <div className="clock-display">
-                <div
-                    className="clock-time"
-                    style={{
-                        fontSize: `${fontSize.time}px`,
-                        color: config?.timeColor || '#000000',
-                        fontFamily: getFontFamily()
-                    }}
-                >
-                    {formatTime()}
-                </div>
-                <div
-                    className="clock-location"
-                    style={{
-                        fontSize: `${fontSize.location}px`,
-                        color: config?.locationColor || '#666666',
-                        fontFamily: getFontFamily()
-                    }}
-                >
-                    {getTimezoneName()}
+            {renderFlagBackground()}
+            <div className="clock-content-layer">
+                <div className="clock-display">
+                    <div
+                        className="clock-time"
+                        style={{
+                            fontSize: `${fontSize.time}px`,
+                            color: config?.timeColor || '#000000',
+                            fontFamily: getFontFamily(),
+                            textShadow: config?.showFlag ? '0 2px 10px rgba(0,0,0,0.3)' : 'none'
+                        }}
+                    >
+                        {formatTime()}
+                    </div>
+                    <div
+                        className="clock-location"
+                        style={{
+                            fontSize: `${fontSize.location}px`,
+                            color: config?.locationColor || '#666666',
+                            fontFamily: getFontFamily(),
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            textShadow: config?.showFlag ? '0 1px 5px rgba(0,0,0,0.3)' : 'none'
+                        }}
+                    >
+                        <span>{getTimezoneName()}</span>
+                    </div>
                 </div>
             </div>
         </div>

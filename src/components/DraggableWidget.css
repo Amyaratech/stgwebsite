@@ -162,12 +162,13 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     cursor: nwse-resize;
-    background: linear-gradient(135deg, transparent 50%, rgba(168, 85, 247, 0.6) 50%);
+    background: linear-gradient(135deg, transparent 50%, rgba(168, 85, 247, 0.8) 50%);
+    z-index: 999;
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: all 0.2s;
 }
 
 .draggable-widget.edit-mode:hover .resize-handle {

@@ -16,8 +16,8 @@
 .theme-popup {
     width: 900px;
     max-width: 95vw;
-    height: 700px;
-    max-height: 90vh;
+    height: 850px;
+    max-height: 95vh;
     background: #1a1b26;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 20px;
@@ -368,27 +368,43 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
-    max-height: 520px;
+    max-height: 650px;
     overflow-y: auto;
     padding-right: 12px;
 }
 
+.theme-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.theme-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.theme-content::-webkit-scrollbar-thumb {
+    background: rgba(167, 139, 250, 0.3);
+    border-radius: 10px;
+}
+
+.theme-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(167, 139, 250, 0.5);
+}
+
 .theme-presets-grid-large::-webkit-scrollbar {
-    width: 10px;
+    width: 6px;
 }
 
 .theme-presets-grid-large::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 5px;
+    background: transparent;
 }
 
 .theme-presets-grid-large::-webkit-scrollbar-thumb {
-    background: rgba(167, 139, 250, 0.4);
-    border-radius: 5px;
+    background: rgba(167, 139, 250, 0.3);
+    border-radius: 10px;
 }
 
 .theme-presets-grid-large::-webkit-scrollbar-thumb:hover {
-    background: rgba(167, 139, 250, 0.6);
+    background: rgba(167, 139, 250, 0.5);
 }
 
 .theme-preset-card-large {
@@ -408,6 +424,42 @@
     border-color: #a78bfa;
     transform: translateY(-4px) scale(1.02);
     box-shadow: 0 12px 30px rgba(167, 139, 250, 0.3);
+}
+
+.theme-preset-card-large.selected {
+    border-color: #8b5cf6;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.25) 0%, rgba(139, 92, 246, 0.1) 100%);
+    box-shadow: 0 0 25px rgba(139, 92, 246, 0.4);
+    position: relative;
+}
+
+.selected-badge {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    background: #8b5cf6;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(139, 92, 246, 0.5);
+    z-index: 5;
+    animation: badgePop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes badgePop {
+    from {
+        transform: scale(0) translateY(10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+    }
 }
 
 .preset-header-row {

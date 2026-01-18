@@ -171,7 +171,7 @@ function App() {
     setIsThemeOpen(true);
   };
 
-  const handleThemeSave = async (newTheme) => {
+  const handleThemeSave = async (newTheme, newTypeConfig = null) => {
     if (themingComponentId === null) {
       // Main Wallpaper Theme
       setMainTheme(newTheme);
@@ -191,7 +191,13 @@ function App() {
     } else {
       // Individual Component Theme
       setComponents(prev => prev.map(comp =>
-        comp.id === themingComponentId ? { ...comp, theme: newTheme } : comp
+        comp.id === themingComponentId
+          ? {
+            ...comp,
+            theme: newTheme,
+            typeConfig: newTypeConfig ? { ...comp.typeConfig, ...newTypeConfig } : comp.typeConfig
+          }
+          : comp
       ));
     }
   };

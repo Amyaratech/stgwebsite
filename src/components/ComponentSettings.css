@@ -14,25 +14,29 @@
     animation: fadeIn 0.2s ease-out;
 }
 
-/* Component Settings Popup - Larger Size */
+/* Component Settings Popup */
 .component-settings-popup {
-    background: linear-gradient(135deg, #1a1d2e 0%, #16213e 100%);
-    border-radius: 20px;
+    background: #0f172a;
+    /* Deeper dark blue-black */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
     width: 90%;
-    max-width: 800px;
+    max-width: 850px;
     max-height: 85vh;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
     display: flex;
     flex-direction: column;
-    animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
+    position: relative;
+    color: #f8fafc;
 }
 
 /* Header */
 .component-settings-header {
-    background: linear-gradient(135deg, #2d3561 0%, #1f2937 100%);
-    padding: 24px 30px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.5);
+    padding: 24px 32px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -46,30 +50,29 @@
 
 .header-icon {
     font-size: 32px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .component-settings-header h2 {
     margin: 0;
-    font-size: 24px;
-    font-weight: 700;
+    font-size: 22px;
+    font-weight: 800;
     color: #ffffff;
-    letter-spacing: -0.5px;
+    letter-spacing: -0.02em;
 }
 
 .settings-subtitle {
-    margin: 4px 0 0 0;
+    margin: 2px 0 0 0;
     font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 400;
+    color: #94a3b8;
+    font-weight: 500;
 }
 
 .settings-close {
-    background: rgba(255, 255, 255, 0.1);
-    border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
     color: #ffffff;
     font-size: 24px;
     cursor: pointer;
@@ -81,212 +84,141 @@
 
 .settings-close:hover {
     background: rgba(239, 68, 68, 0.2);
-    transform: scale(1.05);
+    border-color: rgba(239, 68, 68, 0.4);
 }
 
 /* Content Area */
 .component-settings-content {
     flex: 1;
     overflow-y: auto;
-    padding: 30px;
+    padding: 32px;
 }
 
 /* Settings Section */
 .settings-section {
-    margin-bottom: 32px;
-}
-
-.settings-section:last-child {
-    margin-bottom: 0;
+    margin-bottom: 40px;
 }
 
 .section-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #a78bfa;
-    margin: 0 0 20px 0;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Setting Group */
-.setting-group {
-    margin-bottom: 20px;
-}
-
-.setting-label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
-    margin-bottom: 8px;
-}
-
-.setting-input {
-    width: 100%;
-    padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    color: #ffffff;
     font-size: 14px;
-    font-family: inherit;
-    transition: all 0.2s;
-}
-
-.setting-input:focus {
-    outline: none;
-    background: rgba(255, 255, 255, 0.08);
-    border-color: #a78bfa;
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
-}
-
-.setting-input::placeholder {
-    color: rgba(255, 255, 255, 0.3);
-}
-
-/* Type Selector - Radio Buttons */
-.type-selector {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    margin-top: 12px;
-}
-
-.type-radio-option {
-    position: relative;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.type-radio-option:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(167, 139, 250, 0.3);
-    transform: translateY(-2px);
-}
-
-.type-radio-option.selected {
-    background: linear-gradient(135deg, rgba(167, 139, 250, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
-    border-color: #a78bfa;
-    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2);
-}
-
-.type-radio-option input[type="radio"] {
-    position: absolute;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.radio-custom {
-    width: 20px;
-    height: 20px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    position: relative;
-    flex-shrink: 0;
-    transition: all 0.2s;
-}
-
-.type-radio-option.selected .radio-custom {
-    border-color: #a78bfa;
-    background: #a78bfa;
-}
-
-.type-radio-option.selected .radio-custom::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 8px;
-    height: 8px;
-    background: #ffffff;
-    border-radius: 50%;
-}
-
-.type-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.9);
-}
-
-/* Configuration Section */
-.configuration-section {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 16px;
-    padding: 24px;
-    margin-top: 24px;
-    min-height: 280px;
-    /* Consistent height for all types */
-}
-
-/* Type Config Placeholder */
-.type-config-placeholder {
-    text-align: center;
-    padding: 20px;
-    color: rgba(255, 255, 255, 0.4);
-    min-height: 232px;
-    /* Match the config area height */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
-.placeholder-icon {
-    font-size: 64px;
-    margin-bottom: 16px;
-    opacity: 0.5;
-}
-
-.placeholder-text {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    color: rgba(255, 255, 255, 0.5);
-}
-
-.placeholder-hint {
-    font-size: 14px;
-    margin: 0;
-    color: rgba(255, 255, 255, 0.3);
-}
-
-/* Type Config Area */
-.type-config-area {
-    padding: 20px;
-    min-height: 232px;
-    /* Match the placeholder height */
-}
-
-.config-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #ffffff;
-    margin: 0 0 8px 0;
+    font-weight: 700;
+    color: #8b5cf6;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.config-description {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0 0 20px 0;
+/* Setting Group */
+.setting-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin-bottom: 10px;
 }
 
-.config-content {
-    /* Container for actual configuration controls */
-    min-height: 140px;
+.setting-input {
+    width: 100%;
+    padding: 14px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    color: #ffffff;
+    font-size: 16px;
+    font-family: inherit;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.setting-input:focus {
+    outline: none;
+    border-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.05);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15);
+}
+
+/* Type Selector - Chips Style */
+.type-selector {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.type-chip {
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.type-chip input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.chip-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.chip-icon {
+    font-size: 20px;
+}
+
+.chip-label {
+    font-size: 15px;
+    font-weight: 600;
+    color: #cbd5e1;
+}
+
+.type-chip:hover .chip-content {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.type-chip.selected .chip-content {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: #8b5cf6;
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.25);
+}
+
+.type-chip.selected .chip-label {
+    color: #ffffff;
+}
+
+/* Configuration Section as a Modern Card */
+.modern-card {
+    background: rgba(30, 41, 59, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.type-config-area {
+    width: 100%;
+}
+
+.config-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: 6px;
+}
+
+.config-description {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 24px;
 }
 
 /* Configuration Fields */
@@ -294,355 +226,216 @@
     margin-bottom: 20px;
 }
 
-.config-field:last-child {
-    margin-bottom: 0;
-}
-
 .config-label {
     display: block;
     font-size: 13px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+    color: #cbd5e1;
     margin-bottom: 8px;
 }
 
 .config-select {
     width: 100%;
     padding: 12px 16px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     color: #ffffff;
     font-size: 14px;
-    font-family: inherit;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .config-select:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(167, 139, 250, 0.3);
+    border-color: rgba(139, 92, 246, 0.4);
 }
 
 .config-select:focus {
     outline: none;
-    background: rgba(255, 255, 255, 0.08);
-    border-color: #a78bfa;
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+    border-color: #8b5cf6;
 }
 
-.config-select option {
-    background: #1a1d2e;
-    color: #ffffff;
-    padding: 8px;
-}
-
-.config-hint {
-    margin: 8px 0 0 0;
-    font-size: 12px;
-    color: rgba(167, 139, 250, 0.7);
-    font-style: italic;
-}
-
-/* Configuration Grid Layout */
+/* Config Grid */
 .config-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 32px;
 }
 
-.config-column {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+@media (max-width: 600px) {
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* Color Picker Group */
+/* Color Picker */
 .color-picker-group {
     display: flex;
     gap: 12px;
-    align-items: center;
 }
 
 .color-picker {
-    width: 60px;
-    height: 40px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    width: 50px;
+    height: 44px;
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
     background: transparent;
     cursor: pointer;
-    transition: all 0.2s;
-}
-
-.color-picker:hover {
-    border-color: #a78bfa;
-    transform: scale(1.05);
-}
-
-.color-picker::-webkit-color-swatch-wrapper {
-    padding: 0;
+    overflow: hidden;
 }
 
 .color-picker::-webkit-color-swatch {
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
 }
 
 .color-hex-input {
     flex: 1;
-    padding: 10px 14px;
+    padding: 10px 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #f1f5f9;
+    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    font-size: 14px;
+}
+
+/* Premium Toggle Settings */
+.toggle-setting {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+}
+
+.ios-toggle {
+    appearance: none;
+    width: 44px;
+    height: 22px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ios-toggle:checked {
+    background: #8b5cf6;
+    box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+}
+
+.ios-toggle::after {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    background: #ffffff;
+    border-radius: 50%;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.ios-toggle:checked::after {
+    transform: translateX(22px);
+}
+
+/* Premium Range Slider */
+.pro-range-slider {
+    appearance: none;
+    width: 100%;
+    height: 6px;
     background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: #ffffff;
-    font-size: 13px;
-    font-family: 'Courier New', monospace;
-    transition: all 0.2s;
-}
-
-.color-hex-input:focus {
+    border-radius: 10px;
     outline: none;
-    background: rgba(255, 255, 255, 0.08);
-    border-color: #a78bfa;
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.1);
+    margin: 12px 0;
 }
 
-/* Live Preview */
-.preview-column {
-    position: sticky;
-    top: 0;
+.pro-range-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #ffffff;
+    border: 3px solid #8b5cf6;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.pro-range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: #8b5cf6;
+    border-color: #ffffff;
+}
+
+/* Preview */
 .config-preview-label {
-    font-size: 13px;
-    font-weight: 600;
-    color: #a78bfa;
-    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #8b5cf6;
+    margin-bottom: 12px;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
 .config-preview {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
-    border: 1px solid rgba(167, 139, 250, 0.2);
-    border-radius: 12px;
-    padding: 20px;
-    min-height: 200px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     position: relative;
     overflow: hidden;
 }
 
-.config-preview::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background:
-        linear-gradient(45deg, rgba(167, 139, 250, 0.03) 25%, transparent 25%),
-        linear-gradient(-45deg, rgba(167, 139, 250, 0.03) 25%, transparent 25%),
-        linear-gradient(45deg, transparent 75%, rgba(167, 139, 250, 0.03) 75%),
-        linear-gradient(-45deg, transparent 75%, rgba(167, 139, 250, 0.03) 75%);
-    background-size: 20px 20px;
-    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
-    opacity: 0.3;
-    pointer-events: none;
-}
-
-.config-preview .world-clock-widget {
-    position: relative;
-    z-index: 1;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Tabs Navigation */
-.settings-tabs {
-    display: flex;
-    gap: 8px;
-    padding: 16px 24px 0;
-    background: rgba(0, 0, 0, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.tab-button {
-    padding: 12px 24px;
-    background: transparent;
-    border: none;
-    border-bottom: 3px solid transparent;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-}
-
-.tab-button:hover {
-    color: rgba(255, 255, 255, 0.9);
-    background: rgba(255, 255, 255, 0.05);
-}
-
-.tab-button.active {
-    color: #a78bfa;
-    border-bottom-color: #a78bfa;
-    background: rgba(167, 139, 250, 0.1);
-}
-
-/* Theme Presets Section */
-.theme-presets-section {
-    padding: 24px;
-}
-
-.presets-header {
-    margin-bottom: 24px;
-}
-
-.section-description {
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 14px;
-    line-height: 1.6;
-    margin-top: 8px;
-}
-
-.theme-presets-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 16px;
-    max-height: 500px;
-    overflow-y: auto;
-    padding-right: 8px;
-}
-
-/* Custom scrollbar for theme grid */
-.theme-presets-grid::-webkit-scrollbar {
-    width: 8px;
-}
-
-.theme-presets-grid::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
-}
-
-.theme-presets-grid::-webkit-scrollbar-thumb {
-    background: rgba(167, 139, 250, 0.3);
-    border-radius: 4px;
-}
-
-.theme-presets-grid::-webkit-scrollbar-thumb:hover {
-    background: rgba(167, 139, 250, 0.5);
-}
-
-/* Theme Preset Card */
-.theme-preset-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    padding: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.theme-preset-card:hover {
-    background: linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(167, 139, 250, 0.08) 100%);
-    border-color: #a78bfa;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(167, 139, 250, 0.2);
-}
-
-.preset-emoji {
-    font-size: 48px;
-    text-align: center;
-    margin-bottom: 8px;
-}
-
-.preset-info {
-    flex: 1;
-}
-
-.preset-name {
-    font-size: 18px;
-    font-weight: 700;
-    color: #ffffff;
-    margin: 0 0 6px 0;
-}
-
-.preset-description {
-    font-size: 13px;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-}
-
-.preset-preview-colors {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.preview-color {
-    flex: 1;
-    height: 32px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-
-
-
 /* Footer */
 .component-settings-footer {
-    background: rgba(0, 0, 0, 0.2);
-    padding: 20px 30px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(30, 41, 59, 0.5);
+    padding: 24px 32px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
     display: flex;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 16px;
 }
 
 .settings-btn {
-    padding: 12px 24px;
-    border: none;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    border: none;
 }
 
 .cancel-btn {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.05);
+    color: #94a3b8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .cancel-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
-    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
 .save-btn {
-    background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%);
+    background: #8b5cf6;
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(167, 139, 250, 0.3);
+    box-shadow: 0 8px 25px rgba(139, 92, 246, 0.4);
 }
 
 .save-btn:hover {
-    background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+    background: #7c3aed;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(167, 139, 250, 0.4);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.5);
 }
 
 /* Animations */
@@ -659,28 +452,27 @@
 @keyframes slideUp {
     from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px) scale(0.98);
     }
 
     to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
 }
 
-/* Scrollbar Styling */
+/* Scrollbar */
 .component-settings-content::-webkit-scrollbar {
-    width: 8px;
+    width: 6px;
 }
 
 .component-settings-content::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 4px;
+    background: transparent;
 }
 
 .component-settings-content::-webkit-scrollbar-thumb {
     background: rgba(167, 139, 250, 0.3);
-    border-radius: 4px;
+    border-radius: 10px;
 }
 
 .component-settings-content::-webkit-scrollbar-thumb:hover {

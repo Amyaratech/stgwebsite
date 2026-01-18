@@ -45,8 +45,32 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
 
     const handleApplyPreset = (preset) => {
         const applied = applyThemePreset(preset);
-        onSave(applied.theme);
+        onSave(applied.theme, applied.typeConfig);
         onClose();
+    };
+
+    // Helper to check if a preset matches current settings
+    const isPresetMatched = (preset) => {
+        if (!settings || !preset) return false;
+
+        const p = preset.container;
+        const s = settings;
+
+        // Core visual properties check
+        const fieldsToCompare = [
+            'backgroundColor', 'backgroundOpacity', 'transparent',
+            'borderRadius', 'borderWidth', 'borderColor',
+            'blur', 'brightness', 'contrast',
+            'headerBackgroundColor', 'headerTextColor'
+        ];
+
+        return fieldsToCompare.every(field => {
+            // Handle slight floating point differences for opacity/brightness
+            if (typeof p[field] === 'number') {
+                return Math.abs(p[field] - s[field]) < 0.01;
+            }
+            return p[field] === s[field];
+        });
     };
 
     // Predefined color palette
@@ -128,9 +152,12 @@ const ThemeSettings = ({ isOpen, onClose, onSave, currentSettings, targetType = 
                                 {themePresets.map((preset) => (
                                     <div
                                         key={preset.id}
-                                        className="theme-preset-card-large"
+                                        className={`theme-preset-card-large ${isPresetMatched(preset) ? 'selected' : ''}`}
                                         onClick={() => handleApplyPreset(preset)}
                                     >
+                                        {isPresetMatched(preset) && (
+                                            <div className="selected-badge">Selected</div>
+                                        )}
                                         <div className="preset-header-row">
                                             <div className="preset-emoji-large">{preset.emoji}</div>
                                             <div className="preset-info-large">
