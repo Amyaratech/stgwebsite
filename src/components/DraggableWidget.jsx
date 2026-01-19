@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Draggable from 'react-draggable';
 import './DraggableWidget.css';
 import WorldClockWidget from './WorldClockWidget';
+import PhotoGalleryWidget from './PhotoGalleryWidget';
 
 const DraggableWidget = ({ id, name, type, position, size, theme, typeConfig, onAction, isEditMode }) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -46,6 +47,18 @@ const DraggableWidget = ({ id, name, type, position, size, theme, typeConfig, on
 
     const getWidgetStyle = () => {
         if (!theme) return {};
+
+        // Force transparent for PhotoGallery
+        if (type === 'PhotoGallery') {
+            return {
+                width: `${localSize.width}px`,
+                height: `${localSize.height}px`,
+                backgroundColor: 'transparent',
+                border: 'none',
+                backdropFilter: 'none',
+                filter: 'none',
+            };
+        }
 
         const hex = theme.backgroundColor || '#ffffff';
         let bgColor = hex;
@@ -99,22 +112,24 @@ const DraggableWidget = ({ id, name, type, position, size, theme, typeConfig, on
                     </div>
                 )}
 
-                {/* Header Section */}
-                <div
-                    className="widget-header"
-                    style={{
-                        backgroundColor: theme?.headerBackgroundColor || 'transparent',
-                    }}
-                >
-                    <span
-                        className="widget-title"
+                {/* Header Section - Hidden for PhotoGallery */}
+                {type !== 'PhotoGallery' && (
+                    <div
+                        className="widget-header"
                         style={{
-                            color: theme?.headerTextColor || '#000000',
+                            backgroundColor: theme?.headerBackgroundColor || 'transparent',
                         }}
                     >
-                        {name || `New Component`}
-                    </span>
-                </div>
+                        <span
+                            className="widget-title"
+                            style={{
+                                color: theme?.headerTextColor || '#000000',
+                            }}
+                        >
+                            {name || `New Component`}
+                        </span>
+                    </div>
+                )}
 
                 {/* Main Content Area */}
                 <div className="widget-content">
@@ -139,6 +154,8 @@ const DraggableWidget = ({ id, name, type, position, size, theme, typeConfig, on
                         </div>
                     ) : type === 'WorldClock' ? (
                         <WorldClockWidget config={typeConfig} size={localSize} />
+                    ) : type === 'PhotoGallery' ? (
+                        <PhotoGalleryWidget config={typeConfig} size={localSize} />
                     ) : (
                         <div className="component-type-badge" style={{ color: theme?.headerTextColor ? `${theme.headerTextColor}CC` : 'rgba(0,0,0,0.4)' }}>
                             {type}

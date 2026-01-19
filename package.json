@@ -34,17 +34,16 @@
   },
   "build": {
     "appId": "com.lifelivewallpaper.app",
-    "productName": "Life Live Wallpaper",
+    "productName": "LifeLiveWallpaper",
     "files": [
       "dist/**/*",
       "electron/**/*"
     ],
     "directories": {
-      "buildResources": "assets"
+      "output": "release"
     },
     "win": {
-      "target": "nsis",
-      "icon": "assets/icon.ico"
+      "target": "portable"
     }
   }
 }

@@ -289,9 +289,114 @@ const ComponentSettings = ({ isOpen, onClose, onSave, component, availableTypes 
                         <h4 className="config-title">🖼️ Photo Gallery Configuration</h4>
                         <p className="config-description">Configure your photo gallery settings below</p>
                         <div className="config-content">
-                            <p style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center', padding: '40px 20px' }}>
-                                Photo gallery configuration options coming soon...
-                            </p>
+                            <div className="config-grid">
+                                <div className="config-column">
+                                    <div className="config-field">
+                                        <label className="config-label">Image Folder Path</label>
+                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                            <input
+                                                type="text"
+                                                className="config-select"
+                                                value={typeConfig.folderPath || 'No folder selected'}
+                                                readOnly
+                                                placeholder="Click Browse to select folder"
+                                                style={{ flex: 1, cursor: 'default' }}
+                                            />
+                                            <button
+                                                className="browse-folder-btn"
+                                                onClick={async () => {
+                                                    if (window.require) {
+                                                        const { ipcRenderer } = window.require('electron');
+                                                        const result = await ipcRenderer.invoke('select-folder');
+                                                        if (result) {
+                                                            updateTypeConfig('folderPath', result);
+                                                        }
+                                                    }
+                                                }}
+                                                style={{
+                                                    padding: '8px 16px',
+                                                    background: 'linear-gradient(135deg, #8b5cf6 0%, #7e22ce 100%)',
+                                                    border: 'none',
+                                                    borderRadius: '8px',
+                                                    color: 'white',
+                                                    fontWeight: '600',
+                                                    cursor: 'pointer',
+                                                    fontSize: '0.85rem',
+                                                    transition: 'all 0.2s'
+                                                }}
+                                                onMouseEnter={(e) => e.target.style.transform = 'translateY(-2px)'}
+                                                onMouseLeave={(e) => e.target.style.transform = 'translateY(0)'}
+                                            >
+                                                📁 Browse
+                                            </button>
+                                        </div>
+                                        <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '6px' }}>
+                                            Select a folder containing your images (JPG, PNG, GIF, WEBP)
+                                        </p>
+                                    </div>
+
+                                    <div className="config-field">
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                                            <label className="config-label" style={{ marginBottom: 0 }}>Slideshow Interval</label>
+                                            <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#8b5cf6' }}>
+                                                {typeConfig.slideshowInterval || 5}s
+                                            </span>
+                                        </div>
+                                        <input
+                                            type="range"
+                                            className="pro-range-slider"
+                                            min="1"
+                                            max="30"
+                                            step="1"
+                                            value={typeConfig.slideshowInterval || 5}
+                                            onChange={(e) => updateTypeConfig('slideshowInterval', parseInt(e.target.value))}
+                                        />
+                                        <p style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '6px' }}>
+                                            Time in seconds between each image transition
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="config-column preview-column">
+                                    <div className="config-preview-label">Gallery Preview</div>
+                                    <div className="config-preview">
+                                        <div style={getPreviewThemeStyle(component?.theme)}>
+                                            <div style={{
+                                                backgroundColor: component?.theme?.headerBackgroundColor || 'transparent',
+                                                color: component?.theme?.headerTextColor || '#000000',
+                                                padding: '8px 16px',
+                                                fontSize: '11px',
+                                                fontWeight: '800',
+                                                textTransform: 'uppercase',
+                                                letterSpacing: '0.05em',
+                                                borderBottom: '1px solid rgba(0,0,0,0.05)'
+                                            }}>
+                                                {name || 'Photo Gallery'}
+                                            </div>
+                                            <div style={{
+                                                flex: 1,
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(126, 34, 206, 0.1) 100%)',
+                                                padding: '20px'
+                                            }}>
+                                                <div style={{ textAlign: 'center' }}>
+                                                    <div style={{ fontSize: '48px', marginBottom: '8px' }}>🖼️</div>
+                                                    <div style={{ fontSize: '0.85rem', color: 'rgba(0,0,0,0.6)', fontWeight: '600' }}>
+                                                        {typeConfig.folderPath ? 'Slideshow Ready' : 'Select Folder'}
+                                                    </div>
+                                                    {typeConfig.folderPath && (
+                                                        <div style={{ fontSize: '0.75rem', color: 'rgba(0,0,0,0.4)', marginTop: '4px' }}>
+                                                            {typeConfig.slideshowInterval || 5}s intervals
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 );

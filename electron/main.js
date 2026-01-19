@@ -29,6 +29,9 @@ function createWindow() {
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
+            webSecurity: false, // Allow loading local files (needed for gallery images)
+            allowRunningInsecureContent: true,
+            webviewTag: true
         },
     });
 
@@ -119,7 +122,7 @@ ipcMain.on('save-config-file', async (event, configData) => {
         const filePath = 'f:/LifeLiveWallpapper/src/config/config.json';
         const fs = require('fs').promises;
         const data = JSON.stringify(configData, null, 2);
-        await fs.writeFile(filePath, 'utf8', data);
+        await fs.writeFile(filePath, data, 'utf8');
         console.log('Config saved to file:', filePath);
     } catch (error) {
         console.error('Error writing config file:', error);
@@ -135,6 +138,49 @@ ipcMain.on('set-ignore-mouse-events', (event, ignore, options) => {
 
 ipcMain.on('close-app', () => {
     app.quit();
+});
+
+// Folder selection for Photo Gallery
+ipcMain.handle('select-folder', async () => {
+    const { dialog } = require('electron');
+    const result = await dialog.showOpenDialog(mainWindow, {
+        properties: ['openDirectory']
+    });
+
+    if (!result.canceled && result.filePaths.length > 0) {
+        return result.filePaths[0];
+    }
+    return null;
+});
+
+// Load images from gallery folder
+ipcMain.handle('load-gallery-images', async (event, folderPath) => {
+    try {
+        const fs = require('fs').promises;
+        const path = require('path');
+
+        const files = await fs.readdir(folderPath);
+        const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp'];
+
+        const imageFiles = files
+            .filter(file => {
+                const ext = path.extname(file).toLowerCase();
+                return imageExtensions.includes(ext);
+            })
+            .map(file => {
+                const fullPath = path.join(folderPath, file);
+                // Convert to file:// URL format for Electron
+                // Replace backslashes with forward slashes for Windows
+                const normalizedPath = fullPath.replace(/\\/g, '/');
+                return `file:///${normalizedPath}`;
+            });
+
+        console.log('[Gallery] Found images:', imageFiles);
+        return imageFiles;
+    } catch (error) {
+        console.error('Error loading gallery images:', error);
+        return [];
+    }
 });
 
 app.whenReady().then(() => {

@@ -6,8 +6,8 @@
       "isVisible": true,
       "type": "WorldClock",
       "position": {
-        "x": 36,
-        "y": 42
+        "x": 43,
+        "y": 83
       },
       "size": {
         "width": 498,
@@ -48,7 +48,7 @@
       "type": "WorldClock",
       "position": {
         "x": 36,
-        "y": 431
+        "y": 493
       },
       "size": {
         "width": 503,
@@ -87,8 +87,8 @@
       "name": "Eastern Time (US & Canada) Time",
       "isVisible": true,
       "position": {
-        "x": 37,
-        "y": 845
+        "x": 33,
+        "y": 960
       },
       "size": {
         "width": 501,
@@ -122,6 +122,38 @@
         "flagOpacity": 0.2
       },
       "type": "WorldClock"
+    },
+    {
+      "id": 4,
+      "name": "Component 4",
+      "isVisible": true,
+      "position": {
+        "x": 4504,
+        "y": 739
+      },
+      "size": {
+        "width": 616,
+        "height": 587
+      },
+      "theme": {
+        "backgroundColor": "#ffffff",
+        "backgroundOpacity": 1,
+        "transparent": false,
+        "borderRadius": 8,
+        "borderWidth": 0,
+        "borderColor": "#ffffff",
+        "borderStyle": "solid",
+        "blur": 0,
+        "brightness": 1,
+        "contrast": 1,
+        "headerBackgroundColor": "transparent",
+        "headerTextColor": "#000000"
+      },
+      "type": "PhotoGallery",
+      "typeConfig": {
+        "folderPath": "F:\\LifeLiveWallpapper\\Wallpapers\\premanand Ji",
+        "slideshowInterval": 10
+      }
     }
   ]
 }

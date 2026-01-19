@@ -1,41 +1,43 @@
 {
-    "mainComponent": {
-        "name": "Main",
-        "backgroundColor": "#00FF00",
-        "backgroundOpacity": 0,
-        "transparent": true,
-        "borderRadius": 0,
-        "borderWidth": 0,
-        "borderColor": "#a855f7",
-        "borderStyle": "solid",
-        "blur": 10,
-        "brightness": 1,
-        "contrast": 1,
-        "shadowColor": "rgba(0,0,0,0.5)",
-        "shadowBlur": 0
-    },
-    "defaultWidget": {
-        "width": 200,
-        "height": 200,
-        "backgroundColor": "#ffffff",
-        "borderRadius": 8,
-        "defaultPosition": {
-            "x": 100,
-            "y": 100
-        }
-    },
-    "actionButtons": {
-        "size": 48,
-        "spacing": 12,
-        "cornerOffset": 20,
-        "hoverDelay": 300
-    },
-    "componentMetadata": {
-        "availableTypes": [
-            "YearTaskTracker",
-            "WorldClock",
-            "StickyNotes",
-            "PhotoGallery"
-        ]
+  "mainComponent": {
+    "name": "Main",
+    "backgroundColor": "#000000",
+    "backgroundOpacity": 1,
+    "transparent": true,
+    "borderRadius": 0,
+    "borderWidth": 0,
+    "borderColor": "#a855f7",
+    "borderStyle": "solid",
+    "blur": 10,
+    "brightness": 1,
+    "contrast": 1,
+    "shadowColor": "rgba(0,0,0,0.5)",
+    "shadowBlur": 0,
+    "headerBackgroundColor": "transparent",
+    "headerTextColor": "#000000"
+  },
+  "defaultWidget": {
+    "width": 200,
+    "height": 200,
+    "backgroundColor": "#ffffff",
+    "borderRadius": 8,
+    "defaultPosition": {
+      "x": 100,
+      "y": 100
     }
+  },
+  "actionButtons": {
+    "size": 48,
+    "spacing": 12,
+    "cornerOffset": 20,
+    "hoverDelay": 300
+  },
+  "componentMetadata": {
+    "availableTypes": [
+      "YearTaskTracker",
+      "WorldClock",
+      "StickyNotes",
+      "PhotoGallery"
+    ]
+  }
 }
